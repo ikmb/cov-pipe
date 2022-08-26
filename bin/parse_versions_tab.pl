@@ -32,16 +32,6 @@ if ($outfile) {
     open(STDOUT, ">$outfile") or die("Cannot open $outfile");
 }
 
-my $header = qq(
-id: 'software_versions'
-section_name: 'Software Versions'
-plot_type: 'html'
-description: 'are collected at run time from the software output.'
-data: |\n  <dl class="dl-horizontal">
-);
-
-printf $header . "\n";
-
 my $directory = getcwd;
 
 opendir (DIR, $directory) or die $!;
@@ -60,22 +50,21 @@ while (my $file = readdir(DIR)) {
 		my $line = @lines[0];
 		$tool = "GATK4" ;
 		$version = (split " ", $line)[-1];
-	} elsif ($file =~ /v_nextflow.*/ )  {
+		
+	} elsif ($file =~ /^v_nextflow\.txt$/ )  {
 		my $line = @lines[0];
 		$tool = "Nextflow";
 		$version = $line;
+		next;
 	} elsif ($file =~ /^v_ikmb_virus_pipe\.txt$/) {
 		my $line = @lines[0];
                 $tool = "Sars-CoV2 Pipeline";
 		$version = $line;
-		next;
-	} elsif ($file =~ /v_freebayes*/) {
-
-		my $l = @lines[0];
-		$version = (split " ",$l)[-1];
-
-		$tool = "Freebayes";
-
+	} elsif ($file =~ /v_freebayes.*/) {
+                my $line = @lines[0];
+                my @elements = split(" ",$line);
+                $version = @elements[-1];
+                $tool = "Freebayes";
 	} elsif ($file =~ /^v_picard\.txt/) {
 		my $line = @lines[0];
                 $tool = "Picard";
@@ -96,18 +85,13 @@ while (my $file = readdir(DIR)) {
 		$tool =~ s/\,//;
 		$version = @elements[-1];
 	}
-	
-	#my $entry = qq(
-	my $entry = "<dt>$tool</dt><dd><samp>$version</samp></dd>" ;
-	#);
-	printf "    $entry\n";
+
+	printf $tool . "\t" . $version . "\n";	
 	
 	close($IN);
 	
 }
 
 close(DIR);
-
-printf "  </dl>\n";
 
 

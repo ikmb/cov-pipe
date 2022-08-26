@@ -1,9 +1,22 @@
 # You can use this file to create a conda environment for this pipeline:
 #   conda env create -f environment.yml
-name: PIPELINE-VERSION
+name: virus-pipe-1.3
 channels:
-  - defaults
-  - conda-forge
   - bioconda
+  - conda-forge
+  - defaults
 dependencies:
-  - bioconda::fastp=0.23.1
+  - samtools=1.10
+  - bcftools=1.10
+  - htslib=1.10
+  - mosdepth=0.2.9
+  - r-base=3.6.1
+  - r-tidyverse=1.3.0
+  - perl-pdf-api2
+  - perl-pdf-table=0.11.0
+  - snpeff=5.0.0
+  - bwa=0.7.17
+  - perl-excel-writer-xlsx
+  - perl-json=4.07
+  - perl-json-parse=0.61
+  - perl-rest-client=281

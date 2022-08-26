@@ -1,11 +1,13 @@
 process SOFTWARE_VERSIONS {
 
+   publishDir "${params.outdir}/versions", mode: 'copy'	
+	
    input:
-   path('*')
+   path(versions)
 
    output:
    path('versions.yml')
-
+   path(versions)
 
    script:
    

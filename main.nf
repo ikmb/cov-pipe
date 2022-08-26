@@ -23,13 +23,17 @@ def summary = [:]
 run_name = ( params.run_name == false) ? "${workflow.sessionId}" : "${params.run_name}"
 
 WorkflowMain.initialise(workflow, params, log)
-WorkflowPipeline.initialise( params, log)
+WorkflowCovpipe.initialise( params, log)
 
-include { MAIN } from './workflows/main' params(params)
+include { COVPIPE } from './workflows/covpipe' params(params)
+
+multiqc_report = Channel.from([])
 
 workflow {
 
-	MAIN()
+	COVPIPE()
+
+	multiqc_report = multiqc_report.mix(COVPIPE.out.qc)
 
 }
 
