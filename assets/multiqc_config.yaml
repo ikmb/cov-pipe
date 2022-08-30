@@ -1,0 +1,45 @@
+title: "Virus pipeline report"
+subtitle: "Identification, assembly and variant calling"
+custom_logo: "ikmblogo.png"
+custom_logo_title: "Insitute of Clinical Molecular Biology, Kiel"
+custom_logo_url: "http://www.ikmb.uni-kiel.de"
+
+extra_fn_clean_exts:
+    - _R1
+    - _R2
+    - -S
+    - .dedup
+    - type: regex
+      pattern: "-S[0-9]-L[0]*_S[0-9]*"
+
+report_comment: >
+    This report has been generated automatically by the IKMB Virus pipeline.
+    For help interpreting the outputs, please see: https://github.com/ikmb/virus-pipe
+
+report_header_info:
+    - Contact E-mail: "m.hoeppner@ikmb.uni-kiel.de"
+    - Application Type: "Viral sequencing"
+
+table_columns_placement:
+  Pangolin:
+    lineage: 800
+  mosdepth:
+    30_x_pc: 900
+
+table_columns_visible:
+  Samtools:
+    non-primary_alignments: False
+    reads_properly_paired_percent: False
+  fastp:
+    after_filtering_gc_content: False
+    pct_surviving: False
+
+top_modules:
+    - 'general_stats'
+
+quast_config:
+  contig_length_multiplier: 0.001
+  contig_length_suffix: 'Kbp'
+  total_length_multiplier: 0.001
+  total_length_suffix: 'Kbp'
+  total_number_contigs_multiplier: 1

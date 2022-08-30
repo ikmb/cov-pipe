@@ -9,7 +9,7 @@ process FASTP {
 
    output:
    tuple val(meta),path(r1_trim),path(r2_trim), emit: reads
-   path("*.json"), emit: json
+   tuple val(meta),path("*.json"), emit: json
    path('versions.yml'), emit: version
 
    script:

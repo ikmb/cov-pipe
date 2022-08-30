@@ -64,7 +64,7 @@ process BAM_INDEX {
 
 process DEDUP {
 
-	label 'samtools'
+	label 'default'
 
 	tag "${meta.sample_id}"
 
@@ -84,6 +84,9 @@ process DEDUP {
         bam_md_virus_md5 = prefix + ".bam.md5"
 
         """
+
+		samtools dict $params.ref_fasta > header.sam
+
                 samtools sort -m 4G -t 2 -n $bam | samtools fixmate -m - fix.bam
                 samtools sort -m 4G -t 2 -O BAM fix.bam | samtools markdup -r - md.bam
                 samtools index md.bam

@@ -8,12 +8,12 @@ process REPORT {
 
         input:
         tuple val(meta),path(pangolin),path(samtools),path(fasta_qc),path(variants),path(coverage_plot),path(mosdepth)
-        path(version_yaml)
+	path(versions)
 
         output:
-        path(patient_report), emit: pdf
-        path(patient_report_json), emit: json
-        path(patient_report_txt), emit: txt
+        tuple val(meta),path(patient_report), emit: pdf
+        tuple val(meta),path(patient_report_json), emit: json
+        tuple val(meta),path(patient_report_txt), emit: txt
 
         script:
 
@@ -24,7 +24,7 @@ process REPORT {
         """
                 cp $baseDir/assets/ikmb_bfx_logo.jpg .
                 covid_report.pl --patient $meta.sample_id \
-                        --software $version_yaml \
+			--software $versions \
                         --pangolin $pangolin \
                         --depth $mosdepth \
                         --bam_stats $samtools \

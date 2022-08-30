@@ -2,7 +2,7 @@ include { INPUT_CHECK } from '../modules/input_check'
 include { ALIGN } from '../subworkflows/align'
 include { ASSEMBLY } from '../subworkflows/assembly'
 include { VARIANT_CALLING } from '../subworkflows/variant_calling'
-include { SOFTWARE_VERSIONS } from '../modules/software_versions'
+include { VERSIONS } from '../subworkflows/versions'
 include { MULTIQC } from './../modules/multiqc'
 include { CONSENSUS_SELECT_PASS } from './../modules/consensus_select_pass'
 include { RKI_METADATA } from './../modules/rki_metadata'
@@ -29,6 +29,7 @@ Channel.fromPath(params.ref_with_host)
         .set { BWA_INDEX }
 
 ch_versions = Channel.from([])
+ch_qc = Channel.from([])
 
 genome = Channel.fromPath(file(params.ref_fasta, checkIfExists: true))
 
@@ -43,6 +44,9 @@ workflow COVPIPE {
 		INPUT_CHECK.out.reads,
 		BWA_INDEX
 	)
+
+	ch_qc = ch_qc.mix(ALIGN.out.json.map { m,j -> j })
+	ch_qc = ch_qc.mix(ALIGN.out.mosdepth.map { m,f -> f })
 
 	ch_versions = ch_versions.mix(ALIGN.out.versions)
 	
@@ -77,29 +81,29 @@ workflow COVPIPE {
 		ASSEMBLY.out.fasta
 	)
 
+	ch_qc = ch_qc.mix(PANGOLIN_TYPING.out.report.map {m,r -> r })
+
 	ch_versions = ch_versions.mix(PANGOLIN_TYPING.out.versions)
 
-	SOFTWARE_VERSIONS(
-                ch_versions.unique().collectFile(name: "versions_concat.yml")
-        )
+	VERSIONS()
 
-//	REPORT(
-//		PANGOLIN_TYPING.out.report.join(
-//			ALIGN.out.stats
-//		).join(
-//			ASSEMBLY.out.stats
-//		).join(
-//			SNPEFF.out.vcf
-//		).join(
-//			ALIGN.out.jpg
-//		).join(
-//			ALIGN.out.mosdepth
-//		),
-//		SOFTWARE_VERSIONS.out.versions
-//	)
+	REPORT(
+		PANGOLIN_TYPING.out.report.join(
+			ALIGN.out.stats
+		).join(
+			ASSEMBLY.out.stats
+		).join(
+			SNPEFF.out.vcf
+		).join(
+			ALIGN.out.jpg
+		).join(
+			ALIGN.out.mosdepth
+		),
+		VERSIONS.out.versions
+	)
 		
         MULTIQC(
-           ALIGN.out.json.collect()
+           ch_qc.collect()
         )
 
 	emit:

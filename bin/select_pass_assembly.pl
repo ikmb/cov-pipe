@@ -76,9 +76,9 @@ while (<$IN>) {
         chomp;
         my $line = $_;
 
-        if ($line =~ /.*Nb of nucleotides \(counting.*/) {
+        if ($line =~ /^Total bases.*/) {
 		($assembly_length) = $line =~ /(\d+)/;
-	} elsif ( $line =~ /.Nb of Ns./) {
+	} elsif ( $line =~ /^N.*/) {
 		($assembly_gaps) = $line =~ /(\d+)/;
 		$genome_fraction = ($assembly_gaps/$assembly_length) ;
 	}
@@ -86,6 +86,13 @@ while (<$IN>) {
 close($IN);
 
 my $rounded = 100*(sprintf "%.2f", $genome_fraction);
+
+printf STDERR $rounded ."\n";
+printf STDERR $assembly_length . "\n";
+printf STDERR $assembly_gaps . "\n";
+printf STDERR $genome_fraction . "\n";
+printf STDERR $rounded . "\n";
+printf STDERR $target_cov . "\n";
 
 if ($rounded <= $max_missing && $target_cov >= $min_target_cov) {
 

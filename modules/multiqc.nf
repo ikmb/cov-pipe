@@ -1,6 +1,10 @@
 process MULTIQC {
 
-   container 'quay.io/biocontainers/multiqc:1.12--pyhdfd78af_0'
+   label 'multiqc'
+
+   publishDir "${params.outdir}/MultiQC", mode: 'copy'
+
+   container 'depot.galaxyproject.org-singularity-multiqc-1.13a--pyhdfd78af_1'
 
    input:
    path('*')
@@ -11,6 +15,7 @@ process MULTIQC {
    script:
 
    """
+      cp ${baseDir}/assets/multiqc_config.yaml . 
       multiqc . 
    """	
 

@@ -52,7 +52,7 @@ workflow ALIGN {
 	)
 
 	COVERAGE_STATS(
-		BAM_INDEX.out.bam
+		DEDUP.out.bam
 	)
 
 	emit:

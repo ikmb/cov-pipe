@@ -22,8 +22,8 @@ perl my_script.pl
 };
 
 my $outfile = undef;
+my $id = undef;
 my $pangolin = undef;
-my $kraken = undef;
 my $depth = undef;
 my $bam_stats = undef;
 my $software = undef;
@@ -36,8 +36,8 @@ my $help;
 
 GetOptions(
     "help" => \$help,
+    "id=s" => \$id,
     "infile=s" => \$infile,
-    "kraken=s" => \$kraken,
     "patient=s" => \$patient,
     "depth=s" => \$depth,
     "software=s" => \$software,
@@ -54,7 +54,7 @@ if ($help) {
     exit(0);
 }
 
-my $library = (split /\./, $kraken)[0];
+my $library = $id;
 
 my $date = localtime;
 
@@ -149,37 +149,6 @@ foreach my $line (@lines) {
 close($IN);
 
 $data{"Pangolin"}= {"lineage" => $global_lineage, "voc" => $voc_call } ;
-
-######################
-## PARSE KRAKEN REPORT
-######################
-
-open (my $IN, '<', $kraken) or die "FATAL: Can't open file: $kraken for reading.\n$!\n";
-
-my $status = "negativ";
-
-while (<$IN>) {
-
-	chomp;
-	my $line = $_;
-
-	my ($perc,$num_frag_tax,$num_frag_ass,$rank,$tax_id,$name) = split(/\t+/,$line);
-
-        next unless ($rank =~ /S.*/);
-
-        $name =~ s/^\s+|\s+$//g ;
-        $rank =~ s/^\s+|\s+$//g ;
-
-        if ($name =~ "Severe acute respiratory syndrome coronavirus 2") {
-
- 		$status = "positiv";
-
-        }
-}
-
-close($IN);
-
-$data{"Sars-CoV2"}= {"Status" => $status} ;
 
 ########################
 ## PARSE SAMTOOLS REPORT
@@ -391,29 +360,20 @@ $text->text($pipeline_version);
 $step -= 30;
 $text->font($b_font,10);
 $text->translate(50,$step);
-$text->text("Alternative ID");
+$text->text("Proben ID:");
 
 $text->font($font,10);
 $text->translate(250,$step);
 $text->text($patient);
 
-$step -= 20;
-$text->font($b_font,10);
-$text->translate(50,$step);
-$text->text("Library ID");
+#$step -= 20;
+#$text->font($b_font,10);
+#$text->translate(50,$step);
+#$text->text("Library ID");
 
-$text->font($font,10);
-$text->translate(250,$step);
-$text->text($library);
-
-$step -= 20;
-$text->font($b_font,10);
-$text->translate(50,$step);
-$text->text("Sars-CoV2 Status:");
-
-$text->font($font,10);
-$text->translate(250,$step);
-$text->text($status);
+#$text->font($font,10);
+#$text->translate(250,$step);
+#$text->text($library);
 
 $step -= 20;
 $text->font($b_font,10);
@@ -536,7 +496,7 @@ $pdftable->table(
 $text->font($font,8);
 
 $text->translate(50,75);
-$text->text("IKMB pipeline version $pipeline_version - see: https://github.com/ikmb/virus-pipe | Software tools:");
+$text->text("IKMB pipeline version $pipeline_version - see: https://github.com/ikmb/cov-pipe | Software tools:");
 
 $text->translate(50,65);
 
