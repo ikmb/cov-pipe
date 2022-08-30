@@ -16,7 +16,7 @@ RUN gem install zlib
 RUN gem install rest-client -v 2.1.0 
 RUN gem install sqlite3 -v 1.4.4
 
-RUN /opt/conda/envs/virus-pipe-1.3/bin/snpEff download NC_045512.2
+RUN /opt/conda/envs/cov-pipe-1.0/bin/snpEff download NC_045512.2
 
 RUN cd /opt && git clone https://github.com/atks/vt.git && cd vt \
 	&& git checkout 0.577 && make
