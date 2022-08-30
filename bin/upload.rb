@@ -34,8 +34,6 @@ opts = OptionParser.new()
 opts.banner = "A script description here"
 opts.separator ""
 opts.on("-d","--db", "=DB", "Sqlite DB file") { |argument| options.db = argument }
-opts.on("-j","--json", "=JSON","JSON file") {|argument| options.json = argument }
-opts.on("-f","--fasta", "=FASTA", "Fasta file") { |argument| options.fasta = argument }
 opts.on("-h","--help","Display the usage information") {
  puts opts
  exit
@@ -43,27 +41,45 @@ opts.on("-h","--help","Display the usage information") {
 
 opts.parse! 
 
-json = JSON.parse(IO.readlines(options.json).join)
+unless File.exist(options.db)
+	abort "Could not find the specified flatfile database! (--db)"
+end
+
+fastas = Dir["*.fasta"]
+jsons = Dir["*.json"]
 
 VirusDB::DBConnection.connect(options.db)
 
-blob = Zlib.deflate(IO.readlines(options.fasta).join)
+jsons.each do |j| 
 
-entry = VirusDB::Sample.create(
-        sample_id: json["Sample"]["patient"],
-        pangolin_lineage: json["Pangolin"]["lineage"],
-        pangolin_lineage_full: json["Pangolin"]["voc"],
-        coverage_20X: json["reads"]["coverage_20X"],
-        pipeline_version: json["Version"],
-        reference: json["Reference"],
-        sequence: blob
-)
-entry.save
+	json = JSON.parse(IO.readlines(j).join)
+	base_id = json.split(".")[0..-2].join(".")
 
-samples = VirusDB::Sample.all
+	warn base_id
 
-samples.each do |s|
-        puts s.inspect
-end
+	fasta = fasta.find{|f| f.include?(base_id) }
+
+	if fasta
+
+		blob = Zlib.deflate(IO.readlines(fasta).join)
+
+		entry = VirusDB::Sample.create(
+        		sample_id: json["Sample"]["patient"],
+	        	pangolin_lineage: json["Pangolin"]["lineage"],
+	        	pangolin_lineage_full: json["Pangolin"]["voc"],
+		        coverage_20X: json["reads"]["coverage_20X"],
+        		pipeline_version: json["Version"],
+		        reference: json["Reference"],
+        		sequence: blob
+		)
+		entry.save
+
+	else
+
+		warn "Missing FASTA for #{base_id}"
+
+	end
+
+end 
 
 
