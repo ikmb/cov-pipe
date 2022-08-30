@@ -8,7 +8,7 @@ RUN conda env create -f /environment.yml && conda clean -a
 ENV PATH /opt/conda/envs/cov-1.0/bin:/opt/vt:$PATH
 
 RUN apt-get -y update && apt-get -y install procps make gcc  git build-essential autotools-dev automake libsparsehash-dev libboost-all-dev \
-cmake zlib1g-dev coreutils ruby sqlite-3 libsqlite3-dev
+cmake zlib1g-dev coreutils ruby sqlite3 libsqlite3-dev
 
 RUN gem install json=2.6.2 activerecord=7.0.3.1 zlib rest-client=2.1.0 sqlite3=1.4.4
 
