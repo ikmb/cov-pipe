@@ -10,12 +10,13 @@ process DB_UPLOAD {
 	params.sqlite_db
 
 	output:
-	path log, emit: log
+	path(log_file), emit: log
 
 	script:
+	log_file = params.run_name + ".sql.log"
 
 	"""
-		upload.rb -d ${params.sqlite_db}
+		upload.rb -d ${params.sqlite_db} > $log_file
 	"""	
 
 }

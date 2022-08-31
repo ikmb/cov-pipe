@@ -104,8 +104,8 @@ workflow COVPIPE {
 	)
 
 	DB_UPLOAD(
-		REPORT.out.json.collect(),
-		ASSEMBLY.out.fasta.collect()
+		REPORT.out.json.map {m,j -> j }.collect(),
+		ASSEMBLY.out.fasta.map { m,f -> f }.collect()
 	)
 
         MULTIQC(

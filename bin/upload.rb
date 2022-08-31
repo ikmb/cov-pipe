@@ -41,7 +41,7 @@ opts.on("-h","--help","Display the usage information") {
 
 opts.parse! 
 
-unless File.exist(options.db)
+unless File.exist?(options.db)
 	abort "Could not find the specified flatfile database! (--db)"
 end
 
@@ -50,16 +50,19 @@ jsons = Dir["*.json"]
 
 VirusDB::DBConnection.connect(options.db)
 
-jsons.each do |j| 
+fastas.each do |fasta| 
 
-	json = JSON.parse(IO.readlines(j).join)
-	base_id = json.split(".")[0..-2].join(".")
+	base_id = fasta.split(".")[0]
 
 	warn base_id
 
-	fasta = fasta.find{|f| f.include?(base_id) }
+	j = jsons.find{|f| f.include?(base_id) }
 
-	if fasta
+	if j
+
+		puts "Running ${fasta} <-> #{j}"
+
+	        json = JSON.parse(IO.readlines(j).join)
 
 		blob = Zlib.deflate(IO.readlines(fasta).join)
 
@@ -76,7 +79,7 @@ jsons.each do |j|
 
 	else
 
-		warn "Missing FASTA for #{base_id}"
+		warn "Missing JSON for #{base_id}"
 
 	end
 
