@@ -78,6 +78,13 @@ fastas.each do |fasta|
 		)
 		entry.save
 
+		pangolin = VirusDB::Pangolin.create(
+			sample_id: entry.id,
+			pangolin_version = json["Software"]["pangolin"],
+			pangolin_call = json["Pangolin"]["lineage"]
+		)
+		pangolin.save
+
 	else
 
 		warn "Missing JSON for #{base_id}"
