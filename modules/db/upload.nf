@@ -3,7 +3,8 @@ process DB_UPLOAD {
 	label 'default'
 
 	input:
-	path('*')
+	path(jsons)
+	path(fastas)
 
 	when: 
 	params.sqlite_db

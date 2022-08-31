@@ -5,7 +5,7 @@ LABEL authors="Marc Hoeppner" \
 COPY environment.yml /
 
 RUN conda env create -f /environment.yml && conda clean -a
-ENV PATH /opt/conda/envs/cov-1.0/bin:/opt/vt:$PATH
+ENV PATH /opt/conda/envs/cov-pipe-1.0/bin:/opt/vt:$PATH
 
 RUN apt-get -y update && apt-get -y install procps make gcc  git build-essential autotools-dev automake libsparsehash-dev libboost-all-dev \
 cmake zlib1g-dev coreutils ruby ruby-dev sqlite3 libsqlite3-dev default-jre

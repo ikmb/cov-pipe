@@ -9,6 +9,7 @@ include { RKI_METADATA } from './../modules/rki_metadata'
 include { PANGOLIN_TYPING } from './../subworkflows/pangolin_typing'
 include { SNPEFF } from './../modules/snpeff'
 include { REPORT } from './../modules/report'
+include { DB_UPLOAD } from './../modules/db/upload'
 
 def returnFile(it) {
     // Return file if it exists
@@ -101,7 +102,12 @@ workflow COVPIPE {
 		),
 		VERSIONS.out.versions
 	)
-		
+
+	DB_UPLOAD(
+		REPORT.out.json.collect(),
+		ASSEMBLY.out.fasta.collect()
+	)
+
         MULTIQC(
            ch_qc.collect()
         )
