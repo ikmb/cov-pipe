@@ -14,6 +14,9 @@ class WorkflowPipeline {
 		log.info  "Must provide a run_name (--run_name)"
 	        System.exit(1)
         }
+	if (!params.run_date) {
+		log.info "Must provide a run date (--run_date) as YYYY-MM-DD"
+	}
     
 
     }

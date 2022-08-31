@@ -29,6 +29,7 @@ process REPORT {
                         --depth $mosdepth \
                         --bam_stats $samtools \
                         --assembly_stats $fasta_qc \
+			--run_date $params.run_date \
                         --vcf $variants \
                         --plot $coverage_plot \
                         --outfile $patient_report > $patient_report_json

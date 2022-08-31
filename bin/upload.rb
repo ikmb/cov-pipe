@@ -72,6 +72,7 @@ fastas.each do |fasta|
 	        	pangolin_lineage_full: json["Pangolin"]["voc"],
 		        coverage_20X: json["reads"]["coverage_20X"],
         		pipeline_version: json["Version"],
+			run_date: json["run_date"],
 		        reference: json["Reference"],
         		sequence: blob
 		)
