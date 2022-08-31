@@ -1,4 +1,4 @@
-#DB_ADAPTER = "sqlite3"
+DB_ADAPTER = "sqlite3"
 #DB_PATH = "/home/sukmb352/projects/pipelines/virus-pipe/db/covid_db.sqlite"
 require 'active_record'
 require 'rest-client'
@@ -29,7 +29,7 @@ module VirusDB
   end
 
   class Pangolin < DBConnection
-	self.primary_key = id
+	self.primary_key = "id"
 	belongs_to :sample, foreign_key: "sample_id"
   end	
 

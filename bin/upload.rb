@@ -65,12 +65,14 @@ fastas.each do |fasta|
 	        json = JSON.parse(IO.readlines(j).join)
 
 		blob = Zlib.deflate(IO.readlines(fasta).join)
+		jblob = Zlib.deflate(IO.readlines(j).join)		
 
 		entry = VirusDB::Sample.create(
         		sample_id: json["Sample"]["patient"],
 	        	pangolin_lineage: json["Pangolin"]["lineage"],
 	        	pangolin_lineage_full: json["Pangolin"]["voc"],
 		        coverage_20X: json["reads"]["coverage_20X"],
+			json: jblob,
         		pipeline_version: json["Version"],
 			run_date: json["run_date"],
 		        reference: json["Reference"],
@@ -78,10 +80,12 @@ fastas.each do |fasta|
 		)
 		entry.save
 
+		warn entry.inspect
+
 		pangolin = VirusDB::Pangolin.create(
 			sample_id: entry.id,
-			pangolin_version = json["Software"]["pangolin"],
-			pangolin_call = json["Pangolin"]["lineage"]
+			pangolin_version: json["Software"]["pangolin"],
+			pangolin_lineage: json["Pangolin"]["lineage"]
 		)
 		pangolin.save
 

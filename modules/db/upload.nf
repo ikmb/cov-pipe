@@ -1,5 +1,7 @@
 process DB_UPLOAD {
 
+	publishDir "${params.outdir}/logs", mode: 'copy'
+
 	label 'default'
 
 	input:
