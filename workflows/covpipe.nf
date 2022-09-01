@@ -10,6 +10,7 @@ include { PANGOLIN_TYPING } from './../subworkflows/pangolin_typing'
 include { SNPEFF } from './../modules/snpeff'
 include { REPORT } from './../modules/report'
 include { DB_UPLOAD } from './../modules/db/upload'
+include { WEEKLY_REPORT } from './../modules/weekly_report'
 
 def returnFile(it) {
     // Return file if it exists
@@ -106,6 +107,10 @@ workflow COVPIPE {
 	DB_UPLOAD(
 		REPORT.out.json.map {m,j -> j }.collect(),
 		ASSEMBLY.out.fasta.map { m,f -> f }.collect()
+	)
+
+	WEEKLY_REPORT(
+		DB_UPLOAD.out.log
 	)
 
         MULTIQC(
