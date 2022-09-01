@@ -8,7 +8,7 @@ process WEEKLY_REPORT {
 	path(trigger)
 
 	output:
-	path(report), emit: txt
+	path(report), emit: tab
 
 	script:
 	report = params.run_name + "-" + params.run_date + ".weekly.txt"

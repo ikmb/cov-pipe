@@ -113,6 +113,10 @@ workflow COVPIPE {
 		DB_UPLOAD.out.log
 	)
 
+	CSV2XLS(
+		WEEKLY_REPORT.out.tab
+	)
+
         MULTIQC(
            ch_qc.collect()
         )
