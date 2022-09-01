@@ -10,7 +10,7 @@ ENV PATH /opt/conda/envs/cov-pipe-1.0/bin:/opt/vt:$PATH
 RUN apt-get -y update && apt-get -y install procps make gcc  git build-essential autotools-dev automake \
 cmake zlib1g-dev coreutils ruby ruby-dev sqlite3 libsqlite3-dev default-jre
 
-RUN pip install pip csv2xls
+RUN pip install pip workbook csv2xls
 RUN gem install json -v 2.6.2 
 RUN gem install activerecord -v 7.0.3.1 
 RUN gem install zlib
