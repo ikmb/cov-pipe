@@ -7,18 +7,20 @@ process DB_UPLOAD {
 	input:
 	path(jsons)
 	path(fastas)
+	path(db)
 
 	when: 
 	params.sqlite_db
 
 	output:
 	path(log_file), emit: log
+	path(db), emit: db
 
 	script:
 	log_file = params.run_name + ".sql.log"
 
 	"""
-		upload.rb -d ${params.sqlite_db} > $log_file
+		upload.rb -d $db -n ${params.run_name} -r ${params.run_date} -v ${workflow.manifest.version} > $log_file
 	"""	
 
 }

@@ -77,25 +77,25 @@ opts.parse!
 
 VirusDB::DBConnection.connect(options.db)
 
-data = VirusDB::Sample.all.group_by{|s| s.run_date }.sort_by {|k,v| k }.reverse
+runs = VirusDB::Run.order(run_date: :desc).all.to_a
 
-this = data.shift
-last = data.shift
-other = data
+this = runs.shift
+last = runs.shift
+other = runs
 
 failed ={ "this" => 0, "previous" => 0, "older" => 0} 
 
 bucket = {}
 
-this_date = this.shift
-this_samples = this.shift
+this_date = this.run_date
+this_samples = this.samples
 
-last_date = last.shift
-last_samples = last.shift
+last_date = last.run_date
+last_samples = last.samples
 
 other_samples = []
-other.each do |o,samples|
-	samples.each {|s| other_samples << s }
+other.each do |oruns|
+	oruns.samples.each {|s| other_samples << s }
 end
 
 sets = { "this" => this_samples, "previous" => last_samples, "older" => other_samples }

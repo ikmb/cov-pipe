@@ -47,7 +47,7 @@ end
 	
 options.platform ? sequencer = options.platform : sequencer = "NovaSeq6000"
 
-puts "IndivID;SampleID;RGID;R1;R2"
+puts "sample_id,library_id,readgroup_id,R1,R2"
 
 patients_replaced = 0
 # group = the library id, may be split across lanes
@@ -98,7 +98,7 @@ groups.each do |group, files|
 
         	pgu = flowcell_id + "." + lane + "." + index
 
-        	puts "#{individual};#{sample};#{readgroup};#{left};#{right}"
+        	puts "#{individual},#{library},#{readgroup},#{left},#{right}"
 	end
 end
 

@@ -24,6 +24,7 @@ process REPORT {
         """
                 cp $baseDir/assets/ikmb_bfx_logo.jpg .
                 covid_report.pl --patient $meta.sample_id \
+			--id $meta.library_id \
 			--software $versions \
                         --pangolin $pangolin \
                         --depth $mosdepth \

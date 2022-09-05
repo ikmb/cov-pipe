@@ -6,6 +6,7 @@ process WEEKLY_REPORT {
 
 	input:
 	path(trigger)
+	path(db)
 
 	output:
 	path(report), emit: tab
@@ -14,7 +15,7 @@ process WEEKLY_REPORT {
 	report = params.run_name + "-" + params.run_date + ".weekly.txt"
 
 	"""
-		weekly_report.rb -d ${params.sqlite_db} > $report
+		weekly_report.rb -d ${db} > $report
 	"""
 
 }

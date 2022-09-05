@@ -29,6 +29,7 @@ workflow ALIGN {
         bam_mapped = BWA_MEM.out.bam.map{ meta, bam ->
 		new_meta = [:]
                 new_meta.sample_id = meta.sample_id
+		new_meta.library_id = meta.library_id
                 def groupKey = meta.sample_id
                 tuple( groupKey, new_meta, bam)
         }.groupTuple(by: [0,1]).map{ g, new_meta, bam -> [ new_meta, bam ] }

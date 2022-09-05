@@ -37,6 +37,8 @@ genome = Channel.fromPath(file(params.ref_fasta, checkIfExists: true))
 
 samplesheet = Channel.fromPath(params.samples)
 
+db = file(params.sqlite_db, checkIfExists: true)
+
 workflow COVPIPE {
 	
 	main:
@@ -106,15 +108,13 @@ workflow COVPIPE {
 
 	DB_UPLOAD(
 		REPORT.out.json.map {m,j -> j }.collect(),
-		ASSEMBLY.out.fasta.map { m,f -> f }.collect()
+		ASSEMBLY.out.fasta.map { m,f -> f }.collect(),
+		db
 	)
 
 	WEEKLY_REPORT(
-		DB_UPLOAD.out.log
-	)
-
-	CSV2XLS(
-		WEEKLY_REPORT.out.tab
+		DB_UPLOAD.out.log,
+		DB_UPLOAD.out.db
 	)
 
         MULTIQC(

@@ -22,10 +22,16 @@ module VirusDB
     end
   
   end
+
+  class Run < DBConnection
+	self.primary_key = "id"
+	has_many :samples, :dependent => :destroy
+  end
   
   class Sample < DBConnection
 	self.primary_key = "id"
 	has_many :pangolins, dependent: :destroy
+	belongs_to :run, foreign_key: "run_id"
   end
 
   class Pangolin < DBConnection
