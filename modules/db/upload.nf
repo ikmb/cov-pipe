@@ -20,7 +20,7 @@ process DB_UPLOAD {
 	log_file = params.run_name + ".sql.log"
 
 	"""
-		upload.rb -d $db -n ${params.run_name} -r ${params.run_date} -v ${workflow.manifest.version} > $log_file
+		upload.rb -d $db -n ${params.run_name} -r ${params.run_date} -v ${workflow.manifest.version} -c $params.clean > $log_file
 	"""	
 
 }

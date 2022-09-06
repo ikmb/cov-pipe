@@ -4,7 +4,7 @@ timestamp REAL DEFAULT (datetime('now', 'localtime')),
 run_date TEXT NOT NULL,
 run_name TEXT NOT NULL,
 pipeline_version TEXT NOT NULL,
-UNIQUE(run_name,run_date));
+UNIQUE(run_date,run_name));
 CREATE TABLE sample(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 run_id INTEGER NOT NULL,

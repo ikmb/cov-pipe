@@ -75,9 +75,16 @@ existing = VirusDB::Run.find_by(run_name: options.run_name)
 
 if existing
 	if options.clean
+		puts "Removing existing run from the database..."
+		existing.samples.each do |s|
+			s.pangolins.each do |p|
+				p.delete
+			end
+			s.delete
+		end
 		existing.delete
 	else
-		puts "This run is already in the database.."
+		puts "This run is already in the database...will do nothing."
 		exit
 	end
 end

@@ -22,7 +22,7 @@
 require 'optparse'
 require 'ostruct'
 require 'json'
-require '/home/sukmb352/git/cov-pipe/assets/gem/virus_db.rb'
+require File.dirname(__FILE__) + "/../assets/gem/virus_db.rb"
 require 'zlib'
 require 'rest-client'
 
@@ -79,10 +79,12 @@ VirusDB::DBConnection.connect(options.db)
 
 runs = VirusDB::Run.order(run_date: :desc).all.to_a
 
+# The run from this week, last week, and all previous runs
 this = runs.shift
 last = runs.shift
 other = runs
 
+# Count failed samples per time slot
 failed ={ "this" => 0, "previous" => 0, "older" => 0} 
 
 bucket = {}
@@ -102,6 +104,7 @@ sets = { "this" => this_samples, "previous" => last_samples, "older" => other_sa
 
 bucket_template = {"this" => { "UKSH Kiel" => 0, "UKSH Lübeck" => 0, "other" => 0 }, "previous" => { "UKSH Kiel" => 0, "UKSH Lübeck" => 0, "other" => 0 }, "older" => { "UKSH Kiel" => 0, "UKSH Lübeck" => 0, "other" => 0 } }
 
+# Iterate over weeks. 
 sets.each do |k,samples|
 
 	samples.each do |sample|
@@ -123,7 +126,9 @@ sets.each do |k,samples|
 			end
 		end
 
-		p = sample.pangolin_lineage
+		#p = sample.pangolin_lineage
+		call = sample.get_latest_pango_call
+		call ? p = call.pangolin_lineage : p = "None"
 
 		if bucket.has_key?(p)	
 			bucket[p][k][source] += 1 
@@ -134,6 +139,10 @@ sets.each do |k,samples|
 
 	end
 end
+
+###################
+# Print everything
+###################
 
 puts "\tAktuell #{this_date}\t\t\t\t\t\t\tVorwoche #{last_date}\t\t\t\t\t\t\t\tAltdaten"
 

@@ -21,20 +21,17 @@ For more details on available options, see below.
 ### `--folder` 
 Path to a folder containing Illumina PE reads. Will automatically group files into libraries and lanes. Assumes the CCGA (standard Illumina´) naming scheme: `*_L0*_R{1,2}_001.fastq.gz`. Mutually exclusive with `--reads` and `--samples`.
 
-### `--reads` 
-Regexp pointing to a list of PE Illumina reads for analysis (e.g. --reads /path/to/*_L0*_R{1,2}_001.fastq.gz). Must be enclosed in single-quotes. Mutually exclusive with `--folder` and `--samples`.
-
 ### `--samples`
 Path to a CSV formatted sample sheet as an alternative to --reads. Expects the following columns:
 
 ```
-IndivID;SampleID;R1;R2
-21Ord1339;21Ord1339-L1;/path/to/reads_R1_001.fastq.gz;/path/to/reads_R2_001.fastq.gz
+sample_id,library_id,readgroup_id,R1,R2
+21Ord1339,21Ord1339-L1,21Ord1339-L1_L001,/path/to/reads_R1_001.fastq.gz,/path/to/reads_R2_001.fastq.gz
 ```
 
 A script is included with this code base to produce such a file from a folder of fastQ files
 
-Mutually exclusive with `--reads` and `--folder`. 
+Mutually exclusive with `--folder`. 
 
 ```
 ruby /path/to/samplesheet_from_folder.rb -f /path/to/folder > Samples.csv
@@ -47,6 +44,12 @@ Provide a usefull name to this analysis run (could be the LIMS project ID)
 
 ### `--outdir` (default: results)
 A folder name to which all outputs are written. This can also be a path (relative or absolute) - the target location with be created if necessary. 
+
+### `--db`
+A SQLite database flatfile (pre-configured for our environment)
+
+### `--clean` (default: false)
+Overwrite the existing run in the database (--db)
 
 ### `--clip` (default: 20)
 Remove n bases from both 3' and 5' of each read to account for fragmented amplicon primers that cannot be detected otherwise.

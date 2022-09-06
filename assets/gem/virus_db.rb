@@ -31,12 +31,29 @@ module VirusDB
   class Sample < DBConnection
 	self.primary_key = "id"
 	has_many :pangolins, dependent: :destroy
-	belongs_to :run, foreign_key: "run_id"
+	belongs_to :run
+
+	def get_latest_pango_call
+		self.pangolins.sort_by{|p| p.id }[-1]
+	end
+
+	def to_fasta
+		answer = []
+		answer << ">#{self.sample_id}"
+		string = Zlib.inflate(self.sequence).split("\n")[1..-1].join
+
+		while string.length > 80
+			seq = string.slice!(0..79)
+			answer << seq
+		end
+		answer << seq
+		return answer.join("\n")
+	end
   end
 
   class Pangolin < DBConnection
 	self.primary_key = "id"
-	belongs_to :sample, foreign_key: "sample_id"
+	belongs_to :sample
   end	
 
 end

@@ -42,10 +42,27 @@ db = file(params.sqlite_db, checkIfExists: true)
 workflow COVPIPE {
 	
 	main:
-	INPUT_CHECK(samplesheet)
+
+	if (params.samples) {
+		INPUT_CHECK(samplesheet)
+		ch_reads = INPUT_CHECK.out.reads
+	} else if (params.folder) {
+		Channel.fromFilePairs(params.folder + "/*L0*_R{1,2}_001.fastq.gz", flat: true)
+		.ifEmpty { exit 1, "Did not find any reads matching your input pattern..." }
+		.map { triple -> 
+			def sample_id = triple[0]
+			def library_id = triple[0]
+			def readgroup_id = triple[1].split("_R{1,2}_")[0]
+			def meta = [:]
+			meta.sample_id = sample_id
+			meta.library_id = library_id
+			meta.readgroup_id = readgroup_id
+			tuple(meta,file(tuple[1],checkIfExists: true),file(tuple[2], checkIfExists: true))
+		}.set { ch_reads }
+	}
 
 	ALIGN(
-		INPUT_CHECK.out.reads,
+		ch_reads,
 		BWA_INDEX
 	)
 
