@@ -35,8 +35,6 @@ ch_qc = Channel.from([])
 
 genome = Channel.fromPath(file(params.ref_fasta, checkIfExists: true))
 
-samplesheet = Channel.fromPath(params.samples)
-
 db = file(params.sqlite_db, checkIfExists: true)
 
 workflow COVPIPE {
@@ -44,20 +42,21 @@ workflow COVPIPE {
 	main:
 
 	if (params.samples) {
-		INPUT_CHECK(samplesheet)
+		INPUT_CHECK(Channel.fromPath(params.samples))
 		ch_reads = INPUT_CHECK.out.reads
 	} else if (params.folder) {
 		Channel.fromFilePairs(params.folder + "/*L0*_R{1,2}_001.fastq.gz", flat: true)
 		.ifEmpty { exit 1, "Did not find any reads matching your input pattern..." }
 		.map { triple -> 
 			def sample_id = triple[0]
+			sample_id = (sample_id.contains("_K0")) ? sample_id.split("_")[1] : sample_id
 			def library_id = triple[0]
-			def readgroup_id = triple[1].split("_R{1,2}_")[0]
+			def readgroup_id = triple[1].getBaseName().split("_R{1,2}_")[0]
 			def meta = [:]
 			meta.sample_id = sample_id
 			meta.library_id = library_id
 			meta.readgroup_id = readgroup_id
-			tuple(meta,file(tuple[1],checkIfExists: true),file(tuple[2], checkIfExists: true))
+			tuple(meta,file(triple[1],checkIfExists: true),file(triple[2], checkIfExists: true))
 		}.set { ch_reads }
 	}
 

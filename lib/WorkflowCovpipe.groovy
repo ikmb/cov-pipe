@@ -15,7 +15,11 @@ class WorkflowPipeline {
 	        System.exit(1)
         }
 	if (!params.run_date) {
-		log.info "Must provide a run date (--run_date) as YYYY-MM-DD"
+		log.info "Must provide a run date (--run_date) as YYYY_MM_DD"
+		System.exit(1)
+	}
+	if (!params.run_date ==~ /^\d+_\d+_\d+$/) {
+		log.info "Run date must use this format: YYYY_MM_DD"
 		System.exit(1)
 	}
 	if (params.folder && params.samples) {
