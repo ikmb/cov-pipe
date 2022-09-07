@@ -9,6 +9,8 @@ include { RKI_METADATA } from './../modules/rki_metadata'
 include { PANGOLIN_TYPING } from './../subworkflows/pangolin_typing'
 include { SNPEFF } from './../modules/snpeff'
 include { REPORT } from './../modules/report'
+include { DB_UPLOAD } from './../modules/db/upload'
+include { WEEKLY_REPORT } from './../modules/weekly_report'
 
 def returnFile(it) {
     // Return file if it exists
@@ -33,15 +35,33 @@ ch_qc = Channel.from([])
 
 genome = Channel.fromPath(file(params.ref_fasta, checkIfExists: true))
 
-samplesheet = Channel.fromPath(params.samples)
+db = file(params.sqlite_db, checkIfExists: true)
 
 workflow COVPIPE {
 	
 	main:
-	INPUT_CHECK(samplesheet)
+
+	if (params.samples) {
+		INPUT_CHECK(Channel.fromPath(params.samples))
+		ch_reads = INPUT_CHECK.out.reads
+	} else if (params.folder) {
+		Channel.fromFilePairs(params.folder + "/*L0*_R{1,2}_001.fastq.gz", flat: true)
+		.ifEmpty { exit 1, "Did not find any reads matching your input pattern..." }
+		.map { triple -> 
+			def sample_id = triple[0]
+			sample_id = (sample_id.contains("_K0")) ? sample_id.split("_")[1] : sample_id
+			def library_id = triple[0]
+			def readgroup_id = triple[1].getBaseName().split("_R{1,2}_")[0]
+			def meta = [:]
+			meta.sample_id = sample_id
+			meta.library_id = library_id
+			meta.readgroup_id = readgroup_id
+			tuple(meta,file(triple[1],checkIfExists: true),file(triple[2], checkIfExists: true))
+		}.set { ch_reads }
+	}
 
 	ALIGN(
-		INPUT_CHECK.out.reads,
+		ch_reads,
 		BWA_INDEX
 	)
 
@@ -101,7 +121,18 @@ workflow COVPIPE {
 		),
 		VERSIONS.out.versions
 	)
-		
+
+	DB_UPLOAD(
+		REPORT.out.json.map {m,j -> j }.collect(),
+		ASSEMBLY.out.fasta.map { m,f -> f }.collect(),
+		db
+	)
+
+	WEEKLY_REPORT(
+		DB_UPLOAD.out.log,
+		DB_UPLOAD.out.db
+	)
+
         MULTIQC(
            ch_qc.collect()
         )

@@ -47,8 +47,9 @@ end
 	
 options.platform ? sequencer = options.platform : sequencer = "NovaSeq6000"
 
-puts "IndivID;SampleID;RGID;R1;R2"
+puts "sample_id,library_id,readgroup_id,R1,R2"
 
+# /mnt/demux/illumina/220901_NS500633_0152_AHVCN3AFX3/DX_CorSurV_WGS/S281922_K025743-S2-L1_S20_L001_R2_001.fastq.gz
 patients_replaced = 0
 # group = the library id, may be split across lanes
 groups.each do |group, files|
@@ -74,9 +75,10 @@ groups.each do |group, files|
 			}
 		end
 
-		# H26247-L3_S1_L001_R1_001_fastqc.html
+		# /mnt/demux/illumina/220901_NS500633_0152_AHVCN3AFX3/DX_CorSurV_WGS/S281922_K025743-S2-L1_S20_L001_R2_001.fastq.gz
         	library = group.split("_S")[0]
-        	sample = group.split("_S")[0]
+		group.match(/^S[0-9].*/) ? sample = group.split("_")[1] : sample = group.split("_S")[0]
+		
 		if group.match(/^S.*_K[0-9]*.*/)
 			sample = group.split("_")[1..-1].join("_").split("_S")[0]
 		end
@@ -98,7 +100,7 @@ groups.each do |group, files|
 
         	pgu = flowcell_id + "." + lane + "." + index
 
-        	puts "#{individual};#{sample};#{readgroup};#{left};#{right}"
+        	puts "#{sample},#{library},#{readgroup},#{left},#{right}"
 	end
 end
 

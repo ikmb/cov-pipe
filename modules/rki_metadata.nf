@@ -16,7 +16,7 @@ process RKI_METADATA {
         path(metadata), emit: metadata
 
         script:
-        metadata = run_name + ".metadata.csv"
+        metadata = params.run_name + ".metadata.csv"
 
         """
                 ikmb_metadata.pl > $metadata

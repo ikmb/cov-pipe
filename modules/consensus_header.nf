@@ -20,7 +20,6 @@ process CONSENSUS_HEADER {
 
         header = base_id
         masked_header = base_id
-        description = meta.sample_id.split("-")[1..-1].join("-")
 
         """
                 echo '>$header' > $consensus_reheader

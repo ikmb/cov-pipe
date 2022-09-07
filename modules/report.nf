@@ -24,11 +24,13 @@ process REPORT {
         """
                 cp $baseDir/assets/ikmb_bfx_logo.jpg .
                 covid_report.pl --patient $meta.sample_id \
+			--id $meta.library_id \
 			--software $versions \
                         --pangolin $pangolin \
                         --depth $mosdepth \
                         --bam_stats $samtools \
                         --assembly_stats $fasta_qc \
+			--run_date $params.run_date \
                         --vcf $variants \
                         --plot $coverage_plot \
                         --outfile $patient_report > $patient_report_json

@@ -22,6 +22,7 @@ perl my_script.pl
 };
 
 my $outfile = undef;
+my $run_date = undef;
 my $id = undef;
 my $pangolin = undef;
 my $depth = undef;
@@ -37,6 +38,7 @@ my $help;
 GetOptions(
     "help" => \$help,
     "id=s" => \$id,
+    "run_date=s" => \$run_date,
     "infile=s" => \$infile,
     "patient=s" => \$patient,
     "depth=s" => \$depth,
@@ -63,6 +65,7 @@ my %data; # hold information for JSON reporting
 $data{"Sample"}= {"library" => $library, "patient" => $patient} ;
 $data{"Reference"} = "NC_045512.2.";
 $data{"timestamp"} = $date;
+$data{"run_date"} = $run_date;
 
 ##########################
 ## PARSE SOFTWARE VERSIONS
