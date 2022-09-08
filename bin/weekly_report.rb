@@ -28,29 +28,10 @@ require 'rest-client'
 
 ### Define modules and classes here
 
-@min_cov = 95.0
-@max_n = 5.0
-
 @sources = {
         "10" => "UKSH Kiel",
         "20" => "UKSH Lübeck"
 }
-
-def check_status(data)
-
-        n_frac = data["Assembly"]["Anteil_Ns"]
-        assembly_len = data["Assembly"]["Laenge"]
-        assembly_gaps = data["Assembly"]["Gaps"]
-        gap_frac =  assembly_gaps.to_f/assembly_len.to_f
-        gap_frac = 100-(gap_frac*100)
-
-        status = true
-        if ( n_frac > @max_n || gap_frac < @min_cov)
-                status = false
-        end
-
-        return status
-end
 
 def percentage(this,total)
 
@@ -110,12 +91,6 @@ sets.each do |k,samples|
 	samples.each do |sample|
 
 		json = JSON.parse(Zlib.inflate(sample.json))
-		valid = check_status(json)
-	
-		if !valid
-			failed[k] += 1
-			next
-		end
 
 		source = "other"
 
@@ -126,9 +101,16 @@ sets.each do |k,samples|
 			end
 		end
 
-		#p = sample.pangolin_lineage
-		call = sample.get_latest_pango_call
-		call ? p = call.pangolin_lineage : p = "None"
+		pass = sample.pass?
+		warn "#{sample.sample_id}\t#{pass}"
+
+		p = "None"
+		if pass
+			call = sample.get_latest_pango_call
+			call ? p = call.pangolin_lineage : p = "None"
+		else
+			p = "ZZ-Failed"
+		end
 
 		if bucket.has_key?(p)	
 			bucket[p][k][source] += 1 

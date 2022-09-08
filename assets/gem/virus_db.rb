@@ -3,6 +3,7 @@ DB_ADAPTER = "sqlite3"
 require 'active_record'
 require 'rest-client'
 require 'json'
+require 'zlib'
 
 module VirusDB 
   
@@ -32,6 +33,27 @@ module VirusDB
 	self.primary_key = "id"
 	has_many :pangolins, dependent: :destroy
 	belongs_to :run
+
+	def pass?
+
+		answer = nil
+
+		min_cov = 95.0
+		max_n = 5.0
+		
+		data = JSON.parse(Zlib.inflate(self.json))
+		n_frac = data["Assembly"]["Anteil_Ns"]
+		assembly_len = data["Assembly"]["Laenge"]
+		assembly_gaps = data["Assembly"]["Gaps"]
+		
+		gap_frac =  assembly_gaps.to_f/assembly_len.to_f
+	        gap_frac = 100-(gap_frac*100)
+
+	        ( n_frac > max_n || gap_frac < min_cov) ? answer = false : answer = true
+
+		return answer
+
+	end
 
 	def get_latest_pango_call
 		self.pangolins.sort_by{|p| p.id }[-1]
