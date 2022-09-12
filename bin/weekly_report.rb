@@ -102,7 +102,6 @@ sets.each do |k,samples|
 		end
 
 		pass = sample.pass?
-		warn "#{sample.sample_id}\t#{pass}"
 
 		p = "None"
 		if pass
