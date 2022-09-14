@@ -50,8 +50,8 @@ workflow COVPIPE {
 		.map { triple -> 
 			def sample_id = triple[0]
 			sample_id = (sample_id.contains("_K0")) ? sample_id.split("_")[1] : sample_id
-			def library_id = triple[0]
-			def readgroup_id = triple[1].getBaseName().split("_R{1,2}_")[0]
+			def library_id = sample_id
+			def readgroup_id = triple[1].getSimpleName().split("/(_R1_|_R2_)/")[0]
 			def meta = [:]
 			meta.sample_id = sample_id
 			meta.library_id = library_id
