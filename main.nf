@@ -29,6 +29,16 @@ include { COVPIPE } from './workflows/covpipe' params(params)
 
 multiqc_report = Channel.from([])
 
+log.info "IKMB COV-PIPE SarsCov2 variant calling"
+log.info "--------------- ${workflow.manifest.version} ----------------"
+log.info "Run name: ${params.run_name}"
+log.info "Run date: ${params.run_date}"
+log.info "--------------------------------------------"
+
+if (params.sqlite_db) {
+	log.info "Database: ${params.sqlite_db}"
+}
+
 workflow {
 
 	COVPIPE()
