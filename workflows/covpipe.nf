@@ -35,7 +35,11 @@ ch_qc = Channel.from([])
 
 genome = Channel.fromPath(file(params.ref_fasta, checkIfExists: true))
 
-db = file(params.sqlite_db, checkIfExists: true)
+if (params.sqlite_db) {
+	db = file(params.sqlite_db, checkIfExists: true)
+} else {
+	db = Channel.empty()
+}
 
 workflow COVPIPE {
 	
