@@ -85,3 +85,5 @@ Enables an additional process that retrieves sample-specific meta data to produc
 The base name of a BWA formatted index containing a human genome sequence together with the Sars-CoV2 [genome](../assets/reference/NC_045512.2.fa). This is used to have decoys for mapping and variant calling. If this is not set, the built-in viral reference genome is used only.  
 This should be fine, we have not yet seen a clear advantage of using a combined reference when working off amplicon data (this might be different for metagenomic data). 
 
+### `--pango_data`
+A local version of the pangolin database; overwrites the database that ships with the respective Pangolin biocontainer. 
